@@ -3,6 +3,7 @@ package org.example.ai.config;
 import jakarta.annotation.Resource;
 import org.example.ai.constant.SystemConstant;
 import org.example.ai.memory.RedisChatMemory;
+import org.example.ai.tools.CourseTool;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
@@ -41,6 +42,19 @@ public class AIConfig {
                         new SimpleLoggerAdvisor(),
                         MessageChatMemoryAdvisor.builder(chatMemory()).build()
                 )
+                .build();
+    }
+
+    @Bean
+    public ChatClient serviceClient(OpenAiChatModel model, CourseTool courseTool) {
+        return ChatClient
+                .builder(model)
+                .defaultSystem(SystemConstant.SERVICE_SYSTEM_PROMPT)
+                .defaultAdvisors(
+                        new SimpleLoggerAdvisor(),
+                        MessageChatMemoryAdvisor.builder(chatMemory()).build()
+                )
+                .defaultTools(courseTool)
                 .build();
     }
 

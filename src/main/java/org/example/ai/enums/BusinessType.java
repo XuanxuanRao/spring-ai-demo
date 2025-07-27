@@ -8,7 +8,8 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum BusinessType {
-    CHAT("chat", "AI聊天");
+    CHAT("chat", "AI聊天"),
+    CUSTOMER_SERVICE("service", "客服咨询");
 
     private final String code;
     private final String desc;
