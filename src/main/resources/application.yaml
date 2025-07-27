@@ -11,7 +11,7 @@ spring:
           temperature: 0.8
   data:
     redis:
-      host: 39.105.96.112
+      host: ${REDIS_HOST}
       port: 6379
       password: ${REDIS_PASSWORD}
       database: 4
