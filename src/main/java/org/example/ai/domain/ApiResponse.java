@@ -1,4 +1,4 @@
-package org.example.ai.result;
+package org.example.ai.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +14,7 @@ public class ApiResponse<T> {
     /**
      * 响应码: SUCCESS(1) 代表成功; ERROR(0) 代表失败
      */
-    private Integer code;
+    private Integer ok;
     /**
      * 响应信息，一个字符串用于描述响应结果
      */

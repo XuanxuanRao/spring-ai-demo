@@ -9,12 +9,21 @@ spring:
         options:
           model: qwen-max
           temperature: 0.8
+      embedding:
+        options:
+          model: text-embedding-v3
+          dimensions: 1024
+    vectorstore:
+      redis:
+        initialize-schema: true
+        index-name: spring_ai_index
+        prefix: "doc:"
   data:
     redis:
       host: ${REDIS_HOST}
       port: 6379
       password: ${REDIS_PASSWORD}
-      database: 4
+      database: 0
       lettuce:
         pool:
           max-active: 50
@@ -26,6 +35,13 @@ spring:
     url: jdbc:mysql://joinup.org.cn:3306/spring-ai-demo?serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&tinyInt1isBit=false&allowPublicKeyRetrieval=true&allowMultiQueries=true&useServerPrepStmts=false
     username: root
     password: ${MYSQL_PASSWORD}
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
 
 server:
   port: 8080
@@ -34,3 +50,9 @@ logging:
   level:
     org.springframework.ai.chat.client.advisor: debug
     org.example.ai: debug
+
+service:
+  file:
+    url: http://81.70.182.217:8080/external/oss/file
+    api-key: ${FILE_API_KEY}
+
