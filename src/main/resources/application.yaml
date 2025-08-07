@@ -56,3 +56,10 @@ service:
     url: http://81.70.182.217:8080/external/oss/file
     api-key: ${FILE_API_KEY}
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html

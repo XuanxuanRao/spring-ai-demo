@@ -1,5 +1,6 @@
 package org.example.ai.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.ai.chat.messages.Message;
@@ -9,7 +10,9 @@ import org.springframework.ai.chat.messages.Message;
  */
 @Data
 @NoArgsConstructor
+@Schema(name = "聊天中发送的消息")
 public class MessageVO {
+    @Schema(description = "消息发送者角色, user or assistant", example = "user")
     private String role;
     private String content;
 

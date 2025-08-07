@@ -1,6 +1,8 @@
 package org.example.ai.controller;
 
 import cn.hutool.core.util.StrUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.ai.enums.BusinessType;
 import org.example.ai.domain.ApiResponse;
@@ -35,6 +37,7 @@ import static org.example.ai.constant.DocumentConstant.CHAT_ID_META_DATA;
 @RestController
 @RequestMapping("/ai/pdf")
 @RequiredArgsConstructor
+@Tag(name = "PDF AI 聊天")
 public class PdfController {
 
     private final FileService fileService;
@@ -54,6 +57,7 @@ public class PdfController {
     }
 
     @PostMapping("/upload/{chatId}")
+    @Operation(summary = "上传文件", description = "只允许上传PDF文件，文件大小不能超过5MB")
     public ApiResponse<Void> upload(@PathVariable String chatId, @RequestParam("file") MultipartFile file) {
         try {
             if (!Objects.equals(file.getContentType(), "application/pdf")) {
