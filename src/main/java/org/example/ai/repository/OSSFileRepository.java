@@ -41,10 +41,8 @@ public class OSSFileRepository implements FileRepository {
 
         // 解析 Content-Disposition，获取文件名
         String fileName = contentDisposition.getFilename();
-        System.out.println("文件名: " + fileName);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("下载文件: {}", response.getBody().getFilename());
             return new AbstractMap.SimpleEntry<>(response.getBody(), fileName);
         } else {
             log.error("文件下载失败: {}", response.getStatusCode());

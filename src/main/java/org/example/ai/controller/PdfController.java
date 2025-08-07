@@ -26,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
+import static org.example.ai.constant.DocumentConstant.CHAT_ID_META_DATA;
+
 
 /**
  * @author chenxuanrao06@gmail.com
@@ -42,12 +44,11 @@ public class PdfController {
 
     @RequestMapping(value = "/chat", produces = "text/html;charset=utf-8")
     public Flux<String> chat(String prompt, String chatId) {
-        var file = fileService.download(chatId);
         historyService.saveHistory(BusinessType.PDF, chatId);
         return pdfClient.prompt()
                 .user(prompt)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, chatId))
-                .advisors(a -> a.param(QuestionAnswerAdvisor.FILTER_EXPRESSION, "file_name == '" + file.getValue() + "'"))
+                .advisors(a -> a.param(QuestionAnswerAdvisor.FILTER_EXPRESSION, "chat_id == '" + chatId + "'"))
                 .stream()
                 .content();
     }
@@ -62,7 +63,7 @@ public class PdfController {
             if (StrUtil.isBlank(fileUrl)) {
                 return ApiResponse.error("文件上传失败，请重试");
             }
-            write2VectorStore(file.getResource());
+            write2VectorStore(file.getResource(), chatId);
             return ApiResponse.success();
         } catch (Exception e) {
             return ApiResponse.error("文件上传失败: " + e.getMessage());
@@ -79,7 +80,7 @@ public class PdfController {
                 .body(file.getKey());
     }
 
-    private void write2VectorStore(Resource resource) {
+    private void write2VectorStore(Resource resource, String chatId) {
         PagePdfDocumentReader pdfReader = new PagePdfDocumentReader(resource,
                 PdfDocumentReaderConfig.builder()
                         .withPageTopMargin(0)
@@ -90,6 +91,7 @@ public class PdfController {
                         .build());
 
         List<Document> documents = pdfReader.read();
+        documents.forEach(doc -> doc.getMetadata().put(CHAT_ID_META_DATA, chatId));
         System.out.println("读取到的文档数量: " + documents.size());
         vectorStore.add(documents);
     }
