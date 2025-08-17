@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.ai.enums.BusinessType;
 import org.example.ai.domain.ApiResponse;
 import org.example.ai.service.FileService;
@@ -37,6 +38,7 @@ import static org.example.ai.constant.DocumentConstant.CHAT_ID_META_DATA;
 @RestController
 @RequestMapping("/ai/pdf")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "PDF AI 聊天")
 public class PdfController {
 
@@ -75,6 +77,7 @@ public class PdfController {
     }
 
     @GetMapping("/file/{chatId}")
+    @Operation(summary = "下载文件", description = "下载聊天上传的文件")
     public ResponseEntity<Resource> download(@PathVariable String chatId) {
         var file = fileService.download(chatId);
         String fileName = URLEncoder.encode(file.getValue(), StandardCharsets.UTF_8);
@@ -96,8 +99,22 @@ public class PdfController {
 
         List<Document> documents = pdfReader.read();
         documents.forEach(doc -> doc.getMetadata().put(CHAT_ID_META_DATA, chatId));
-        System.out.println("读取到的文档数量: " + documents.size());
-        vectorStore.add(documents);
-    }
 
+        // 定义每次处理的批量大小，确保不超过模型限制
+        int batchSize = 10;
+        int totalDocuments = documents.size();
+        log.info("开始分批次添加文档到向量库，批量大小为: {}", batchSize);
+
+        // 循环分批次添加文档
+        for (int i = 0; i < totalDocuments; i += batchSize) {
+            // 计算当前批次的结束索引
+            int end = Math.min(i + batchSize, totalDocuments);
+            // 获取当前批次的子列表
+            List<Document> batch = documents.subList(i, end);
+            log.info("正在处理第{}批次，文档数量: {}",  (i / batchSize) + 1, batch.size());
+            // 将小批次的文档添加到向量库
+            vectorStore.add(batch);
+        }
+        log.info("所有文档已成功添加到向量库");
+    }
 }
