@@ -1,6 +1,7 @@
 package org.example.ai.controller;
 
 import cn.hutool.core.collection.CollectionUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.ai.domain.History;
 import org.example.ai.domain.MessageVO;
@@ -21,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/ai/history")
 @RequiredArgsConstructor
+@Tag(name = "聊天历史记录管理")
 public class HistoryController {
 
     private final HistoryService historyService;

@@ -47,13 +47,15 @@ public class PdfController {
     private final ChatClient pdfClient;
     private final HistoryService historyService;
 
-    @RequestMapping(value = "/chat", produces = "text/html;charset=utf-8")
+    @GetMapping(value = "/chat", produces = "text/html;charset=utf-8")
+    @Operation(summary = "进行PDF聊天")
     public Flux<String> chat(String prompt, String chatId) {
         historyService.saveHistory(BusinessType.PDF, chatId);
         return pdfClient.prompt()
                 .user(prompt)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, chatId))
-                .advisors(a -> a.param(QuestionAnswerAdvisor.FILTER_EXPRESSION, "chat_id == '" + chatId + "'"))
+                .advisors(a -> a.param(QuestionAnswerAdvisor.FILTER_EXPRESSION,
+                        String.format("%s == '%s'", CHAT_ID_META_DATA, chatId)))
                 .stream()
                 .content();
     }
