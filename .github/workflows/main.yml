@@ -3,7 +3,7 @@ name: Build backend and deploy to server
 on:
   push:
     branches:
-      - main
+      -  release
 
 jobs:
   build:
