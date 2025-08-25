@@ -12,15 +12,21 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
+ * Configuration class for AI models
  * @author chenxuanrao06@gmail.com
  */
 @Configuration
 public class AIConfig {
+    @Value("${chat.rag.top-k}")
+    private int topK;
+    @Value("${chat.rag.threshold}")
+    private double similarityThreshold;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -71,8 +77,8 @@ public class AIConfig {
                         MessageChatMemoryAdvisor.builder(chatMemory).build(),
                         QuestionAnswerAdvisor.builder(vectorStore)
                                 .searchRequest(SearchRequest.builder()
-                                        .similarityThreshold(0.5)
-                                        .topK(2)
+                                        .similarityThreshold(similarityThreshold)
+                                        .topK(topK)
                                         .build())
                                 .build()
                 )
