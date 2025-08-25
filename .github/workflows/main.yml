@@ -45,4 +45,4 @@ jobs:
             cd /data/spring-ai-demo
             docker compose down
             docker pull ${{ vars.DOCKER_HUB_ADDR }}/${{ vars.DOCKER_NAMESPACE }}/spring-ai-demo:latest
-            docker compose --project-name joinup up -d
+            docker run -d --restart=always --memory=1g --env-file=./.env -e PROJECT_ENV=prod -p 8090:8080 spring-ai-demo:latest
